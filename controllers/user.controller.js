@@ -1,10 +1,12 @@
 import { UserModel } from "../models/user.model.js";
 import bcryptjs from 'bcryptjs';
+import { token } from "../utils/jwt.utils.js";
 
 // api/v1/users/register
 const register = async(req, res) => {
     try {
         const {email, password, username} = req.body;
+
 
         // Check if all fields are filled
         if(!email || !password || !username) {
@@ -28,10 +30,13 @@ const register = async(req, res) => {
         const salt = await bcryptjs.genSalt(10);
         const hashedPassword = await bcryptjs.hash(password, salt);
         const newUser = await UserModel.create({email, password: hashedPassword, username});
+        
+        // Generate token
+        const userToken = token(newUser.email, newUser.username);
 
         return res.status(201).json({
             ok: true,
-            message: newUser
+            msg: userToken  
         });
 
     } catch (error) {

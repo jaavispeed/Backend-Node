@@ -9,7 +9,7 @@ const create = async({email, password, username}) => {
     }
 
     const {rows} = await db.query(query);
-    return rows;
+    return rows [0];
 };
 
 const findeOneByEmail = async(email) => {
